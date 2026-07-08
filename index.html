@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITキャリア・学習プラン診断｜忍者CODE</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 32%),
+        linear-gradient(180deg, #eff6ff 0%, #f8fafc 42%, #ffffff 100%);
+      color: #1e293b;
+    }
+
+    .screen {
+      animation: fadeSlide 0.3s ease;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .choice-card {
+      transition: all 0.3s ease;
+    }
+
+    .choice-card:hover {
+      transform: translateY(-2px);
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+    }
+
+    .choice-card.is-selected {
+      border-color: #2563eb;
+      background: #dbeafe;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      transition: all 0.3s ease;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.96);
+    }
+
+    .bar-fill {
+      transition: width 0.6s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="min-h-screen px-4 py-6">
+    <div class="mx-auto w-full max-w-[430px]">
+
+      <header class="mb-5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-200">
+            N
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-900">忍者CODE</p>
+            <p class="text-[11px] text-slate-500">IT Career Diagnosis</p>
+          </div>
+        </div>
+        <div class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-blue-600 shadow-sm">
+          約3分
+        </div>
+      </header>
+
+      <section id="startScreen" class="screen">
+        <div class="overflow-hidden rounded-[28px] bg-white shadow-xl shadow-blue-100/70">
+          <div class="relative bg-gradient-to-br from-blue-600 via-blue-500 to-sky-400 px-6 py-8 text-white">
+            <div class="absolute right-[-36px] top-[-36px] h-32 w-32 rounded-full bg-white/20"></div>
+            <div class="absolute bottom-[-48px] left-[-48px] h-36 w-36 rounded-full bg-white/10"></div>
+
+            <p class="mb-3 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur">
+              LINE登録者限定コンテンツ
+            </p>
+            <h1 class="relative text-[28px] font-black leading-tight">
+              あなたに最適な<br />
+              ITキャリア・学習プラン診断
+            </h1>
+            <p class="relative mt-4 text-sm leading-7 text-blue-50">
+              キャリア適性7問＋知識診断5問で、今のあなたに合う学習ルートを診断します。
+            </p>
+          </div>
+
+          <div class="px-6 py-6">
+            <div class="grid grid-cols-3 gap-3">
+              <div class="rounded-2xl bg-blue-50 p-3 text-center">
+                <p class="text-lg font-black text-blue-600">12</p>
+                <p class="text-[11px] text-slate-500">質問数</p>
+              </div>
+              <div class="rounded-2xl bg-emerald-50 p-3 text-center">
+                <p class="text-lg font-black text-emerald-600">4</p>
+                <p class="text-[11px] text-slate-500">診断タイプ</p>
+              </div>
+              <div class="rounded-2xl bg-orange-50 p-3 text-center">
+                <p class="text-lg font-black text-orange-500">3分</p>
+                <p class="text-[11px] text-slate-500">所要時間</p>
+              </div>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-sm font-bold text-slate-800">この診断で分かること</p>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                <li>・あなたに合う学習プラン</li>
+                <li>・現在のWeb制作知識レベル</li>
+                <li>・目標までのおすすめロードマップ</li>
+              </ul>
+            </div>
+
+            <button id="startBtn" class="primary-btn mt-6 w-full rounded-2xl bg-blue-600 px-5 py-4 text-base font-bold text-white shadow-lg shadow-blue-200">
+              診断を始める
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="questionScreen" class="screen hidden">
+        <div class="rounded-[28px] bg-white p-6 shadow-xl shadow-blue-100/70">
+          <div class="mb-5">
+            <div class="mb-2 flex items-center justify-between">
+              <p id="questionCount" class="text-xs font-bold text-blue-600">Question 1 / 12</p>
+              <p id="questionCategory" class="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-600">
+                キャリア診断
+              </p>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full bg-slate-200">
+              <div id="progressBar" class="bar-fill h-full rounded-full bg-blue-600" style="width: 8.3%;"></div>
+            </div>
+          </div>
+
+          <h2 id="questionText" class="min-h-[86px] text-xl font-black leading-8 text-slate-900"></h2>
+
+          <div id="choices" class="mt-5 space-y-3"></div>
+
+          <div class="mt-6 flex gap-3">
+            <button id="backBtn" class="secondary-btn w-1/2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-600">
+              戻る
+            </button>
+            <button id="nextBtn" class="primary-btn w-1/2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-100 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
+              次へ
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultScreen" class="screen hidden"></section>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        id: 'career_01',
+        type: 'career',
+        question: '半年後に一番実現したいことは？',
+        options: [
+          { label: 'A', text: '自分のペースで学びたい', reason: '自分のペースを大切にしたい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '副収入を得たい', reason: '副収入を目指している', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '独立・フリーランスを目指したい', reason: '独立志向がある', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '転職してキャリアを変えたい', reason: '転職を視野に入れている', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_02',
+        type: 'career',
+        question: '学習に使える時間はどれくらいですか？',
+        options: [
+          { label: 'A', text: '週3時間ほど。無理なく進めたい', reason: '無理なく学習したい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '週5〜10時間ほど。副業準備に使いたい', reason: '副業に向けて時間を確保できる', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '毎日学習できる。実務レベルまで高めたい', reason: '実務レベルまで伸ばしたい', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '短期間で集中して学習したい', reason: '短期集中で成果を出したい', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_03',
+        type: 'career',
+        question: '最も魅力を感じる働き方は？',
+        options: [
+          { label: 'A', text: '趣味や自己成長として学ぶ', reason: '自己成長を目的に学びたい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '本業を続けながら副業したい', reason: '本業と両立して副業したい', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '場所を選ばず自由に働きたい', reason: '自由な働き方に魅力を感じている', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '企業に転職して安定して働きたい', reason: '企業で安定して働きたい', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_04',
+        type: 'career',
+        question: '学習で重視したいことは？',
+        options: [
+          { label: 'A', text: '費用を抑えて自分で進めたい', reason: '費用を抑えたい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '案件獲得につながる実践経験がほしい', reason: '案件獲得につながる経験がほしい', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '高単価案件に挑戦できる力をつけたい', reason: '高単価案件に挑戦したい', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '転職活動までサポートしてほしい', reason: '転職活動の支援を受けたい', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_05',
+        type: 'career',
+        question: 'Web制作を学ぶ目的に一番近いものは？',
+        options: [
+          { label: 'A', text: 'まずは基礎を身につけたい', reason: 'まずは基礎を固めたい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '月数万円の副収入を目指したい', reason: '月数万円の副収入を目指している', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '将来的に独立できるスキルがほしい', reason: '将来的な独立を見据えている', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: 'Web業界への転職を目指したい', reason: 'Web業界への転職を目指している', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_06',
+        type: 'career',
+        question: 'サポートで一番ほしいものは？',
+        options: [
+          { label: 'A', text: '必要なときだけ質問できる環境', reason: '必要なときに質問できる環境がほしい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '案件に向けた添削やアドバイス', reason: '添削や案件サポートを求めている', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: 'ポートフォリオや営業面の支援', reason: '営業やポートフォリオ支援が必要', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '履歴書・面接・求人紹介などの支援', reason: '転職支援を重視している', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'career_07',
+        type: 'career',
+        question: '理想の学習スタイルは？',
+        options: [
+          { label: 'A', text: '教材を見ながら自分で進めたい', reason: '教材中心で自走したい', scores: { SELF: 2, SIDE: 0, FREE: 0, CAREER: 0 } },
+          { label: 'B', text: '課題や案件を通じて実践的に学びたい', reason: '実践課題で学びたい', scores: { SELF: 0, SIDE: 2, FREE: 0, CAREER: 0 } },
+          { label: 'C', text: '実務に近い制作物を作り込みたい', reason: '実務に近い制作経験を積みたい', scores: { SELF: 0, SIDE: 0, FREE: 2, CAREER: 0 } },
+          { label: 'D', text: '転職ゴールから逆算して学びたい', reason: '転職ゴールから逆算したい', scores: { SELF: 0, SIDE: 0, FREE: 0, CAREER: 2 } }
+        ]
+      },
+      {
+        id: 'knowledge_01',
+        type: 'knowledge',
+        skill: 'HTML',
+        question: 'HTMLの正式名称はどれですか？',
+        options: [
+          { label: 'A', text: 'HyperText Markup Language', isCorrect: true },
+          { label: 'B', text: 'HighText Making Language', isCorrect: false },
+          { label: 'C', text: 'Home Tool Markup Language', isCorrect: false },
+          { label: 'D', text: 'Hyper Transfer Main Language', isCorrect: false }
+        ]
+      },
+      {
+        id: 'knowledge_02',
+        type: 'knowledge',
+        skill: 'CSS',
+        question: 'CSSの主な役割として正しいものはどれですか？',
+        options: [
+          { label: 'A', text: 'Webページの見た目やレイアウトを指定する', isCorrect: true },
+          { label: 'B', text: 'データベースを操作する', isCorrect: false },
+          { label: 'C', text: 'サーバーを起動する', isCorrect: false },
+          { label: 'D', text: '画像を自動生成する', isCorrect: false }
+        ]
+      },
+      {
+        id: 'knowledge_03',
+        type: 'knowledge',
+        skill: 'JavaScript',
+        question: 'JavaScriptでHTML要素を取得・操作するときによく使うオブジェクトはどれですか？',
+        options: [
+          { label: 'A', text: 'document', isCorrect: true },
+          { label: 'B', text: 'style', isCorrect: false },
+          { label: 'C', text: 'section', isCorrect: false },
+          { label: 'D', text: 'browser', isCorrect: false }
+        ]
+      },
+      {
+        id: 'knowledge_04',
+        type: 'knowledge',
+        skill: 'Responsive',
+        question: 'レスポンシブ対応の説明として正しいものはどれですか？',
+        options: [
+          { label: 'A', text: 'スマホやPCなど画面幅に応じて表示を調整すること', isCorrect: true },
+          { label: 'B', text: 'ページの文字数を自動で増やすこと', isCorrect: false },
+          { label: 'C', text: '画像をすべて非表示にすること', isCorrect: false },
+          { label: 'D', text: 'リンクをすべて別タブで開くこと', isCorrect: false }
+        ]
+      },
+      {
+        id: 'knowledge_05',
+        type: 'knowledge',
+        skill: 'Form',
+        question: 'フォームの送信ボタンに適したHTMLタグはどれですか？',
+        options: [
+          { label: 'A', text: '<button type="submit">送信</button>', isCorrect: true },
+          { label: 'B', text: '<div>送信</div>', isCorrect: false },
+          { label: 'C', text: '<p>送信</p>', isCorrect: false },
+          { label: 'D', text: '<section>送信</section>', isCorrect: false }
+        ]
+      }
+    ];
+
+    const resultContents = {
+      SELF: {
+        label: '独学プラン',
+        catchyName: 'マイペース基礎固め',
+        typeName: '自走学習タイプ',
+        goal: '基礎理解を深め、自分のペースでWeb制作を習得',
+        ctaText: '独学プランを見る',
+        ctaUrl: 'https://ninjacode.work/',
+        mentorUrl: 'https://ninjacode.work/counseling',
+        comment: 'あなたは、自分のペースで着実に学びたいタイプです。まずはHTML/CSS/JavaScriptの基礎を固めながら、小さな制作物を積み上げていく学習スタイルが向いています。',
+        planFeatures: ['買い切り型で学びやすい', '自分のペースで進められる', '基礎から順番に学べる'],
+        suitableFor: ['費用を抑えて始めたい方', 'まずは基礎を学びたい方', '仕事や生活と両立したい方'],
+        support: ['教材閲覧', 'チャット質問', '基礎学習サポート'],
+        roadmap: [
+          ['STEP1', 'HTML/CSSの基礎理解', 'まずはページ構造とデザイン指定の基本を習得します。'],
+          ['STEP2', 'JavaScriptの基本操作', 'ボタン操作や画面切り替えなど、動きのある実装に挑戦します。'],
+          ['STEP3', '小さな制作物を作成', 'LPやプロフィールサイトなど、完成物を増やします。'],
+          ['STEP4', 'ポートフォリオ化', '作ったものを整理し、次の学習や応募に活かします。']
+        ]
+      },
+      SIDE: {
+        label: '副業プラン',
+        catchyName: '在宅・副業スタートダッシュ',
+        typeName: '副業チャレンジタイプ',
+        goal: '副業で月5万円を目指す',
+        ctaText: '副業プランを見る',
+        ctaUrl: 'https://ninjacode.work/',
+        mentorUrl: 'https://ninjacode.work/counseling',
+        comment: 'あなたは副収入を得たいという目的が明確で、サポートまで見据えているタイプです。基礎を固めながら、実案件に近い課題や添削を通じて副業準備を進める環境が向いています。',
+        planFeatures: ['案件保証と相性がよい', '添削で実践力を高められる', '副業開始までの流れを学べる'],
+        suitableFor: ['本業と両立して副業したい方', '月数万円の副収入を目指したい方', '案件獲得までサポートがほしい方'],
+        support: ['課題添削', '案件相談', 'ポートフォリオ支援'],
+        roadmap: [
+          ['STEP1', 'Web制作の基礎固め', 'HTML/CSS/JavaScriptを学び、制作の土台を作ります。'],
+          ['STEP2', '実践課題に挑戦', 'LPやバナー周辺の実装など、副業で使いやすい制作物を作ります。'],
+          ['STEP3', '案件応募準備', 'ポートフォリオや提案文を整えて、受注準備を進めます。'],
+          ['STEP4', '副業案件に挑戦', '小さな案件から実績を作り、副業収入の第一歩を目指します。']
+        ]
+      },
+      FREE: {
+        label: 'フリーランスプラン',
+        catchyName: '自由な働き方実現',
+        typeName: 'フリーランス志向タイプ',
+        goal: '案件獲得力を高め、独立に近づく',
+        ctaText: 'フリーランスプランを見る',
+        ctaUrl: 'https://ninjacode.work/',
+        mentorUrl: 'https://ninjacode.work/counseling',
+        comment: 'あなたは、将来的に自由な働き方や独立を視野に入れているタイプです。制作スキルだけでなく、ポートフォリオ・営業・案件対応まで見据えた実践的な学習が向いています。',
+        planFeatures: ['実務レベルの制作力を伸ばせる', '営業・案件対応まで意識できる', '高単価案件を見据えやすい'],
+        suitableFor: ['将来的に独立したい方', '場所に縛られず働きたい方', '制作実績を作り込みたい方'],
+        support: ['ポートフォリオ添削', '営業準備サポート', '案件獲得に向けた相談'],
+        roadmap: [
+          ['STEP1', '基礎から実装力を強化', 'Web制作の基本を復習し、実務で使える形に整えます。'],
+          ['STEP2', '高品質な制作物を作成', '見た目だけでなく、保守性やレスポンシブまで意識します。'],
+          ['STEP3', '営業・提案準備', '提案文、実績整理、ポートフォリオ改善を行います。'],
+          ['STEP4', '継続案件を目指す', '単発案件から継続案件へつなげる動きを学びます。']
+        ]
+      },
+      CAREER: {
+        label: '転職プラン',
+        catchyName: 'Web業界キャリアチェンジ',
+        typeName: '転職実現タイプ',
+        goal: 'Web業界への転職を目指す',
+        ctaText: '転職プランを見る',
+        ctaUrl: 'https://ninjacode.work/',
+        mentorUrl: 'https://ninjacode.work/counseling',
+        comment: 'あなたは、Web業界への転職というゴールから逆算して学びたいタイプです。学習だけで終わらせず、ポートフォリオ・履歴書・面接対策まで一貫して進めるプランが向いています。',
+        planFeatures: ['転職活動まで見据えられる', 'ポートフォリオを準備できる', 'キャリア相談と相性がよい'],
+        suitableFor: ['Web業界に転職したい方', '未経験からキャリアチェンジしたい方', '学習後の進路まで相談したい方'],
+        support: ['履歴書添削', '面接対策', '求人・キャリア相談'],
+        roadmap: [
+          ['STEP1', '基礎スキル習得', 'HTML/CSS/JavaScriptを中心に、Web制作の基礎を固めます。'],
+          ['STEP2', '転職用制作物を作成', '応募時に見せられるポートフォリオを整えます。'],
+          ['STEP3', '応募書類・面接準備', '履歴書、職務経歴書、面接対策を進めます。'],
+          ['STEP4', 'Web業界へ応募', '学習成果をもとに、転職活動を具体的に進めます。']
+        ]
+      }
+    };
+
+    const state = {
+      currentIndex: 0,
+      answers: Array(questions.length).fill(null)
+    };
+
+    const startScreen = document.getElementById('startScreen');
+    const questionScreen = document.getElementById('questionScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const startBtn = document.getElementById('startBtn');
+    const questionCount = document.getElementById('questionCount');
+    const questionCategory = document.getElementById('questionCategory');
+    const progressBar = document.getElementById('progressBar');
+    const questionText = document.getElementById('questionText');
+    const choices = document.getElementById('choices');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    startBtn.addEventListener('click', () => {
+      startScreen.classList.add('hidden');
+      questionScreen.classList.remove('hidden');
+      renderQuestion();
+    });
+
+    backBtn.addEventListener('click', () => {
+      if (state.currentIndex === 0) {
+        questionScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        return;
+      }
+      state.currentIndex -= 1;
+      renderQuestion();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (state.answers[state.currentIndex] === null) return;
+
+      if (state.currentIndex === questions.length - 1) {
+        showResult();
+        return;
+      }
+
+      state.currentIndex += 1;
+      renderQuestion();
+    });
+
+    function renderQuestion() {
+      const q = questions[state.currentIndex];
+      const selected = state.answers[state.currentIndex];
+
+      questionCount.textContent = `Question ${state.currentIndex + 1} / ${questions.length}`;
+      questionCategory.textContent = q.type === 'career' ? 'キャリア診断' : '知識診断';
+      questionText.textContent = q.question;
+      progressBar.style.width = `${((state.currentIndex + 1) / questions.length) * 100}%`;
+      nextBtn.disabled = selected === null;
+
+      choices.innerHTML = '';
+
+      q.options.forEach((option, optionIndex) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = [
+          'choice-card w-full rounded-2xl border p-4 text-left',
+          selected === optionIndex ? 'is-selected' : 'border-slate-200 bg-white'
+        ].join(' ');
+
+        button.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${selected === optionIndex ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'} text-sm font-black">
+              ${option.label}
+            </span>
+            <span class="pt-1 text-sm font-bold leading-6 text-slate-800">${escapeHtml(option.text)}</span>
+          </div>
+        `;
+
+        button.addEventListener('click', () => {
+          state.answers[state.currentIndex] = optionIndex;
+          renderQuestion();
+        });
+
+        choices.appendChild(button);
+      });
+    }
+
+    function showResult() {
+      const result = calculateResult();
+
+      questionScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+      resultScreen.innerHTML = createResultHtml(result);
+
+      setTimeout(() => {
+        document.querySelectorAll('[data-bar]').forEach((bar) => {
+          bar.style.width = bar.dataset.width;
+        });
+      }, 100);
+    }
+
+    function calculateResult() {
+      const scores = { SELF: 0, SIDE: 0, FREE: 0, CAREER: 0 };
+      let knowledgeScore = 0;
+      const reasons = [];
+      const skillResults = {
+        HTML: 0,
+        CSS: 0,
+        JavaScript: 0,
+        Responsive: 0,
+        Form: 0
+      };
+
+      questions.forEach((q, index) => {
+        const answerIndex = state.answers[index];
+        const option = q.options[answerIndex];
+
+        if (q.type === 'career') {
+          Object.keys(scores).forEach((key) => {
+            scores[key] += option.scores[key] || 0;
+          });
+          reasons.push(option.reason);
+        }
+
+        if (q.type === 'knowledge') {
+          if (option.isCorrect) {
+            knowledgeScore += 1;
+            skillResults[q.skill] = 1;
+          }
+        }
+      });
+
+      const priority = ['CAREER', 'FREE', 'SIDE', 'SELF'];
+      const maxType = Object.keys(scores).sort((a, b) => {
+        if (scores[b] === scores[a]) {
+          return priority.indexOf(a) - priority.indexOf(b);
+        }
+        return scores[b] - scores[a];
+      })[0];
+
+      const maxScore = Math.max(...Object.values(scores));
+      const scorePercentages = {};
+      Object.keys(scores).forEach((key) => {
+        scorePercentages[key] = maxScore === 0 ? 0 : Math.round((scores[key] / maxScore) * 100);
+      });
+
+      const level = getKnowledgeLevel(knowledgeScore);
+      const content = resultContents[maxType];
+
+      return {
+        type: maxType,
+        scores,
+        scorePercentages,
+        knowledgeScore,
+        level,
+        content,
+        reasons: [...new Set(reasons)].slice(0, 4),
+        skillResults
+      };
+    }
+
+    function getKnowledgeLevel(score) {
+      if (score <= 2) {
+        return {
+          label: '初心者レベル',
+          stars: 2,
+          current: '初心者',
+          description: '基礎をこれから固めていく段階です。焦らず順番に学べば十分伸ばせます。'
+        };
+      }
+
+      if (score <= 4) {
+        return {
+          label: '初級レベル',
+          stars: 3,
+          current: '初級者',
+          description: '基本知識はあります。実際に手を動かす課題で理解を深めると伸びやすい段階です。'
+        };
+      }
+
+      return {
+        label: '中級レベル',
+        stars: 4,
+        current: '中級者',
+        description: '基礎知識はかなり身についています。実案件やポートフォリオ制作に進みやすい状態です。'
+      };
+    }
+
+    function createResultHtml(result) {
+      const { content } = result;
+
+      return `
+        <div class="space-y-5 pb-10">
+          <div class="overflow-hidden rounded-[28px] bg-white shadow-xl shadow-blue-100/70">
+            <div class="bg-gradient-to-br from-blue-600 via-blue-500 to-sky-400 px-6 py-8 text-center text-white">
+              <p class="text-sm font-bold text-blue-50">あなたに最適な学習プランは…</p>
+              <h2 class="mt-3 text-[27px] font-black leading-tight">
+                【${content.catchyName}】<br />プランです！
+              </h2>
+              <p class="mt-3 inline-flex rounded-full bg-white/20 px-4 py-2 text-sm font-bold backdrop-blur">
+                ${content.typeName}
+              </p>
+            </div>
+
+            <div class="px-6 py-6">
+              <p class="rounded-2xl bg-blue-50 p-4 text-sm font-bold leading-7 text-slate-700">
+                ${content.comment}
+              </p>
+            </div>
+          </div>
+
+          ${createScoreGraphHtml(result)}
+
+          ${createKnowledgeHtml(result)}
+
+          ${createGoalTimelineHtml(result)}
+
+          ${createReasonHtml(result)}
+
+          ${createRoadmapHtml(result)}
+
+          ${createPlanHtml(result)}
+
+          ${createCtaHtml(result)}
+        </div>
+      `;
+    }
+
+    function createScoreGraphHtml(result) {
+      const labels = {
+        SELF: '独学',
+        SIDE: '副業',
+        FREE: 'フリーランス',
+        CAREER: '転職'
+      };
+
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <div class="mb-4">
+            <p class="text-xs font-bold text-blue-600">FUTURE FIT SCORE</p>
+            <h3 class="mt-1 text-lg font-black text-slate-900">将来の適性スコア</h3>
+          </div>
+
+          <div class="space-y-4">
+            ${Object.keys(labels).map((key) => {
+              const isTop = key === result.type;
+              return `
+                <div>
+                  <div class="mb-1 flex justify-between text-sm">
+                    <span class="${isTop ? 'font-black text-blue-600' : 'font-bold text-slate-600'}">${labels[key]}</span>
+                    <span class="${isTop ? 'font-black text-blue-600' : 'font-bold text-slate-500'}">${result.scorePercentages[key]}%</span>
+                  </div>
+                  <div class="h-3 overflow-hidden rounded-full bg-slate-100">
+                    <div data-bar data-width="${result.scorePercentages[key]}%" class="bar-fill h-full rounded-full ${isTop ? 'bg-blue-600' : 'bg-slate-300'}" style="width:0%;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function createKnowledgeHtml(result) {
+      const skillLabels = {
+        HTML: 'HTML',
+        CSS: 'CSS',
+        JavaScript: 'JavaScript',
+        Responsive: 'レスポンシブ',
+        Form: 'フォーム'
+      };
+
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <p class="text-xs font-bold text-blue-600">CURRENT SKILL</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">現在の知識レベル</h3>
+
+          <div class="mt-4 rounded-2xl bg-slate-50 p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-bold text-slate-500">正答数</p>
+                <p class="text-2xl font-black text-blue-600">${result.knowledgeScore} / 5</p>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-black text-slate-900">${renderStars(result.level.stars)}</p>
+                <p class="text-sm font-bold text-blue-600">${result.level.label}</p>
+              </div>
+            </div>
+            <p class="mt-3 text-sm leading-6 text-slate-600">${result.level.description}</p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 gap-3">
+            ${Object.keys(skillLabels).map((key) => `
+              <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <span class="text-sm font-bold text-slate-700">${skillLabels[key]}</span>
+                <span class="text-sm font-black ${result.skillResults[key] ? 'text-blue-600' : 'text-slate-300'}">
+                  ${result.skillResults[key] ? '★★★☆☆' : '★☆☆☆☆'}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function createGoalTimelineHtml(result) {
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <p class="text-xs font-bold text-blue-600">YOUR ROUTE</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">現在地とゴール</h3>
+
+          <div class="mt-5 space-y-3">
+            ${timelineCard('01', '現在地', result.level.current, 'bg-slate-100 text-slate-600')}
+            ${timelineCard('02', '目標', result.content.goal, 'bg-blue-100 text-blue-600')}
+            ${timelineCard('03', 'おすすめ', result.content.label, 'bg-emerald-100 text-emerald-600')}
+          </div>
+        </section>
+      `;
+    }
+
+    function timelineCard(number, label, text, badgeClass) {
+      return `
+        <div class="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${badgeClass} text-sm font-black">
+            ${number}
+          </div>
+          <div>
+            <p class="text-xs font-bold text-slate-400">${label}</p>
+            <p class="mt-1 text-sm font-black leading-6 text-slate-800">${text}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function createReasonHtml(result) {
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <p class="text-xs font-bold text-blue-600">WHY THIS PLAN</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">おすすめ理由</h3>
+
+          <div class="mt-4 space-y-3">
+            ${result.reasons.map((reason) => `
+              <div class="flex gap-3 rounded-2xl bg-blue-50 p-4">
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">✓</span>
+                <p class="text-sm font-bold leading-6 text-slate-700">${reason}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function createRoadmapHtml(result) {
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <p class="text-xs font-bold text-blue-600">PERSONAL ROADMAP</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">あなた専用ロードマップ</h3>
+
+          <div class="mt-5 space-y-4">
+            ${result.content.roadmap.map((step, index) => `
+              <div class="relative flex gap-4">
+                <div class="flex flex-col items-center">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-black text-white">
+                    ${index + 1}
+                  </div>
+                  ${index !== result.content.roadmap.length - 1 ? '<div class="mt-2 h-12 w-[2px] bg-blue-100"></div>' : ''}
+                </div>
+                <div class="pb-3">
+                  <p class="text-xs font-bold text-blue-600">${step[0]}</p>
+                  <p class="mt-1 text-sm font-black text-slate-900">${step[1]}</p>
+                  <p class="mt-1 text-sm leading-6 text-slate-600">${step[2]}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function createPlanHtml(result) {
+      const content = result.content;
+
+      return `
+        <section class="rounded-[24px] bg-white p-5 shadow-lg shadow-blue-100/50">
+          <p class="text-xs font-bold text-blue-600">RECOMMENDED PLAN</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">おすすめプラン紹介</h3>
+
+          <div class="mt-4 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-400 p-5 text-white">
+            <p class="text-sm font-bold text-blue-100">あなたにおすすめ</p>
+            <p class="mt-1 text-2xl font-black">${content.label}</p>
+          </div>
+
+          <div class="mt-4 grid gap-3">
+            ${infoCard('特徴', content.planFeatures)}
+            ${infoCard('向いている人', content.suitableFor)}
+            ${infoCard('サポート内容', content.support)}
+          </div>
+
+          <a href="${content.ctaUrl}" class="primary-btn mt-5 block rounded-2xl bg-blue-600 px-5 py-4 text-center text-sm font-black text-white shadow-lg shadow-blue-100">
+            ${content.ctaText}
+          </a>
+        </section>
+      `;
+    }
+
+    function infoCard(title, items) {
+      return `
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-sm font-black text-slate-900">${title}</p>
+          <ul class="mt-2 space-y-1 text-sm leading-6 text-slate-600">
+            ${items.map((item) => `<li>・${item}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    function createCtaHtml(result) {
+      return `
+        <section class="overflow-hidden rounded-[28px] bg-gradient-to-br from-slate-900 to-blue-900 p-6 text-white shadow-xl shadow-blue-100/70">
+          <p class="text-sm font-bold text-blue-100">診断結果をもとに相談できます</p>
+          <h3 class="mt-2 text-2xl font-black leading-tight">
+            あなたに合う学習ルートを<br />メンターに相談しませんか？
+          </h3>
+          <p class="mt-3 text-sm leading-7 text-blue-50">
+            「この結果で本当に合っている？」「どのコースを選ぶべき？」という疑問を、無料メンター相談で確認できます。
+          </p>
+
+          <a href="${result.content.mentorUrl}" class="primary-btn mt-5 block rounded-2xl bg-emerald-500 px-5 py-4 text-center text-sm font-black text-white shadow-lg shadow-emerald-900/20">
+            無料メンター相談を予約する
+          </a>
+
+          <button onclick="restartDiagnosis()" class="secondary-btn mt-3 w-full rounded-2xl border border-white/30 bg-white/10 px-5 py-4 text-sm font-black text-white">
+            もう一度診断する
+          </button>
+        </section>
+      `;
+    }
+
+    function restartDiagnosis() {
+      state.currentIndex = 0;
+      state.answers = Array(questions.length).fill(null);
+      resultScreen.classList.add('hidden');
+      startScreen.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderStars(count) {
+      return '★'.repeat(count) + '☆'.repeat(5 - count);
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
+</body>
+</html>
